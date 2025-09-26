@@ -1,0 +1,45 @@
+{
+    "version": "1.0",
+    "loops": [
+        {"name": "Loop 1", "pinSend": 16, "pinReturn": 17},
+        {"name": "Loop 2", "pinSend": 18, "pinReturn": 19},
+        {"name": "Loop 3", "pinSend": 20, "pinReturn": 21},
+        {"name": "Loop 4", "pinSend": 22, "pinReturn": 26}
+    ],
+	"banks": [
+		{
+			"name": "Bank 1",
+			"patches": [ 
+				{
+					"name": "Patch 1",
+					"loops":[0,0,0,0]
+				},
+                {
+					"name": "Patch 2",
+					"loops":[1,0,1,1]
+				},
+                {
+                    "name": "Patch 3",
+                    "loops":[1,1,1,0]
+                }
+			]
+		},
+        {
+            "name": "Bank 2",
+            "patches": [ 
+                {
+                    "name": "Patch 1",
+                    "loops":[0,0,1,0]
+                },
+                {
+                    "name": "Patch 2",
+                    "loops":[0,0,0,1]
+                },
+                {
+                    "name": "Patch 3",
+                    "loops":[0,0,0,0]
+                }
+            ]
+        }
+	]
+}
