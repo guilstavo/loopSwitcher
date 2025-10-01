@@ -1,6 +1,6 @@
 from machine import Pin
 from typing import List, Optional
-from file import File
+from file import Json
 
 class Loop:
 
@@ -33,7 +33,7 @@ class Looper:
     
     def __init__(self, fileName: str = "config.json"):
         self.__loopers:List[Loop] = []
-        file = File(fileName)
+        file = Json(fileName)
         for loop_data in file.data.get("loops", []):
             self.add_loop(
                 name = loop_data.get("name", ""),

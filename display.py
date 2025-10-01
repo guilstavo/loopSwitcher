@@ -1,32 +1,17 @@
-# MicroPython SH1106 OLED driver
-#
-# Pin Map I2C for ESP8266
-#   - 3v - xxxxxx   - Vcc
-#   - G  - xxxxxx   - Gnd
-#   - D2 - GPIO 5   - SCK / SCL
-#   - D1 - GPIO 4   - DIN / SDA
-#   - D0 - GPIO 16  - Res (required, unless a Hardware reset circuit is connected)
-#   - G  - xxxxxx     CS
-#   - G  - xxxxxx     D/C
-#
-# Pin's for I2C can be set almost arbitrary
-#
-from machine import Pin, I2C
-import sh1106
+
+from machine import Pin, SoftI2C
+from lib_lcd1602_2004_with_i2c import LCD
 
 class Display:
     
-    def __init__(self, sclPin: int = 5, sdaPin: int = 4):
+    def __init__(self, sclPin: int = 1, sdaPin: int = 0):
         
-        i2c = I2C(scl=Pin(sclPin), sda=Pin(sdaPin), freq=400000)
-        
-        self.display = sh1106.SH1106_I2C(128, 64, i2c, Pin(16), 0x3c)
-        
-        self.display.sleep(False)
+        self.lcd = LCD(SoftI2C(scl=Pin(sclPin), sda=Pin(sdaPin), freq=100000))
         print('Init Display')
 
-    def print(self, text):
-        self.display.fill(0)
-        self.display.text(text, 0, 20, 2)
-        self.display.show()
-        print('Display Print: ', text)
+    def print(self, line1: str = "", line2: str = "", line3: str = "", line4: str = ""):
+        self.lcd.puts(line1, 0, 0)
+        self.lcd.puts(line2, 1, 0)
+        self.lcd.puts(line3, 2, 0)
+        self.lcd.puts(line4, 3, 0)
+        print('Display Print: ', line1, line2, line3, line4)

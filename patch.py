@@ -1,5 +1,5 @@
 from typing import List, Optional
-from file import File
+from file import Json
 from loop import Looper
 from display import Display
 
@@ -31,7 +31,7 @@ class Patch:
                 loop.deactivate()
         
 
-    def activate(self, file: File, index: int):
+    def activate(self, file: Json, index: int):
         self.active = True
         file.save_to_file("active_patch_index", index)
 
@@ -49,7 +49,7 @@ class Bank:
         self.patches = patches
         self.active = active
 
-    def activate(self, file: File, index: int):
+    def activate(self, file: Json, index: int):
         self.active = True
         file.save_to_file("active_bank_index", index)
 
@@ -66,12 +66,15 @@ class Bank:
 class BankManager:
     banks: List[Bank] = []
     display = Display()
-    statusFile: File
+    statusFile: Json
+
+    active_bank_name: str
+    active_patch_name: str
 
     def __init__(self):
         self.banks = []
-        self.file = File()
-        self.statusFile: File = File('active_status.json')
+        self.file = Json()
+        self.statusFile: Json = Json('active_status.json')
 
         active_bank_index = self.get_active_bank_index()
         active_patch_index = self.get_active_patch_index()
@@ -119,7 +122,9 @@ class BankManager:
         if new_bank_index >= len(self.banks):
             new_bank_index = 0
         self.banks[new_bank_index].activate(self.statusFile, new_bank_index)
-        self.display.print(f'Moved up to bank {self.banks[new_bank_index].name}')
+        self.set_active_bank_name(self.banks[new_bank_index].name)
+        # self.display.print(self.banks[new_bank_index].name)
+        # self.display.print(f'Moved up to bank {self.banks[new_bank_index].name}')
 
     def move_down_bank(self):
         current_index = next((i for i, bank in enumerate(self.banks) if bank.active), None)
@@ -131,7 +136,9 @@ class BankManager:
         if new_bank_index < 0:
             new_bank_index = len(self.banks) - 1
         self.banks[new_bank_index].activate(self.statusFile, new_bank_index)
-        self.display.print(f'Moved down to bank {self.banks[new_bank_index].name}')
+        self.set_active_bank_name(self.banks[new_bank_index].name)
+        # self.display.print(self.banks[new_bank_index].name)
+        # self.display.print(f'Moved down to bank {self.banks[new_bank_index].name}')
 
     def select_patch(self, patch_index: int):
         current_bank = self.get_active_bank()
@@ -145,4 +152,19 @@ class BankManager:
                 if current_patch:
                     current_patch.deactivate()
             
-                self.display.print(f'Selected patch {current_bank.patches[patch_index].name} in bank {current_bank.name}')
+                self.display.print(current_bank.name, current_bank.patches[patch_index].name)
+                # self.display.print(f'Selected patch {current_bank.patches[patch_index].name} in bank {current_bank.name}')
+
+    def set_active_bank_name(self, active_bank_name):
+        self.active_bank_name = active_bank_name
+        self.display.print(active_bank_name)
+
+    def get_active_bank_name(self) -> str:
+        return self.active_bank_name
+    
+    def set_active_patch_name(self, active_patch_name):
+        self.active_patch_name = active_patch_name
+        self.display.print(self.get_active_bank_name(), active_patch_name)
+    
+    def get_active_patch_name(self) -> str:
+        return self.active_patch_name

@@ -1,10 +1,10 @@
 import json
 
-class File:
+class Json:
 
     def __init__(self, fileName: str = "config.json"):
         self.fileName = fileName
-        print(f'Init File {self.fileName}')
+        print(f'Init Json File {self.fileName}')
 
         with open(self.fileName, 'r') as file:
             self.file = file
@@ -24,3 +24,12 @@ class File:
         with open(self.fileName, 'w') as file:
             json.dump(self.data, file)
             print(f'Saved {key}: {value} to {self.fileName}')
+
+class Html:
+
+    def __init__(self, fileName: str = "index.html"):
+        self.fileName = fileName
+
+        with open(self.fileName, 'r') as file:
+            self.file = file
+            self.data = file.read()

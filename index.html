@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Loop Switcher</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" href="data:,">
+        <style>
+            html {
+                font-family: Helvetica;
+                display: inline-block;
+                margin: 0px auto;
+                text-align: center;
+            }
+            h1 {
+                color: #0F3376;
+                padding: 2vh;
+            }
+            p {
+                font-size: 1.5rem;
+            }
+            .bank-button, .patch-button {
+                display: inline-block;
+                background-color: #e7bd3b;
+                border: none;
+                border-radius: 4px;
+                color: white;
+                padding: 16px 40px;
+                text-decoration: none;
+                font-size: 30px;
+                margin: 2px;
+                cursor: pointer;
+            }
+            .down {
+                background-color: #4286f4;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Loop Switcher</h1>
+        <p>Bank: <% bank %></p>
+        <p>Patch: <% patch %></p>
+        <div>
+            <!-- <p><a href="/?bank=up"><button class="bank-button up">Up</button></a></p> -->
+            <!-- <p><a href="/?bank=down"><button class="bank-button down">Down</button></a></p> -->
+            <form action="/" method="post">
+                <input type="hidden" name="bank" value="up" />
+                <input type="submit" class="bank-button up" value="Bank Up" />
+            </form>
+            <form action="/" method="post">
+                <input type="hidden" name="bank" value="down" />
+                <input type="submit" class="bank-button down" value="Bank down" />
+            </form>
+        </div>
+        <div>
+            <!-- <p><a href="/?patch=1"><button class="patch-button">1</button></a></p>
+            <p><a href="/?patch=2"><button class="patch-button">2</button></a></p>
+            <p><a href="/?patch=3"><button class="patch-button">3</button></a></p> -->
+            <form action="/" method="post">
+                <input type="hidden" name="patch" value="1" />
+                <input type="submit" class="patch-button" value="1" />
+            </form>
+            <form action="/" method="post">
+                <input type="hidden" name="patch" value="2" />
+                <input type="submit" class="patch-button" value="2" />
+            </form>
+            <form action="/" method="post">
+                <input type="hidden" name="patch" value="3" />
+                <input type="submit" class="patch-button" value="3" />
+            </form>
+        </div>
+        <div>
+            <div class="effect-loop enabled">
+                <p>Effect Loop: Enabled</p>
+            </div>
+            <div class="effect-loop enabled">
+                <p>Effect Loop: Enabled</p>
+            </div>
+            <div class="effect-loop enabled">
+                <p>Effect Loop: Enabled</p>
+            </div>
+            <div class="effect-loop enabled">
+                <p>Effect Loop: Enabled</p>
+            </div>
+        </div>
+
+        
+    </body>
