@@ -88,11 +88,13 @@ class WebServer():
 
         
     def serve(self, active_bank: str, active_patch: str):
+        print('Start web server')
         # Start web server
         try:
             client = self.connection.accept()[0]
             request = client.recv(1024)
             request = str(request)
+            print("Request:", request)
             
             try:
                 method = request.split()[0]
@@ -105,6 +107,7 @@ class WebServer():
                 mybytes = client.recv(1024)
                 request = mybytes.decode('UTF-8')
                 requestValue = request.split()[0]
+                print('requestValue POST', requestValue)
                 
             elif method == 'GET':
                 try:

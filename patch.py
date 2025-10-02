@@ -33,7 +33,7 @@ class Patch:
 
     def activate(self, file: Json, index: int):
         self.active = True
-        file.save_to_file("active_patch_index", index)
+        # file.save_to_file("active_patch_index", index)
 
     def deactivate(self):
         self.active = False
@@ -51,7 +51,7 @@ class Bank:
 
     def activate(self, file: Json, index: int):
         self.active = True
-        file.save_to_file("active_bank_index", index)
+        # file.save_to_file("active_bank_index", index)
 
     def deactivate(self):
         self.active = False
@@ -68,8 +68,8 @@ class BankManager:
     display = Display()
     statusFile: Json
 
-    active_bank_name: str
-    active_patch_name: str
+    active_bank_name: str = ""
+    active_patch_name: str = ""
 
     def __init__(self):
         self.banks = []
@@ -92,12 +92,15 @@ class BankManager:
                 )
                 if patch.active:
                     patch.select()
+                    self.set_active_patch_name(patch.name)
                 patches.append(patch)
             bank = Bank(
                 name = bank_data.get("name", ""),
                 patches = patches,
                 active = (bank_index == active_bank_index)
             )
+            if bank.active:
+                self.set_active_bank_name(bank.name)
             self.banks.append(bank)
 
     def get_active_bank_index(self) -> int: 
@@ -160,11 +163,11 @@ class BankManager:
         self.display.print(active_bank_name)
 
     def get_active_bank_name(self) -> str:
-        return self.active_bank_name
+        return self.active_bank_name or ""
     
     def set_active_patch_name(self, active_patch_name):
         self.active_patch_name = active_patch_name
         self.display.print(self.get_active_bank_name(), active_patch_name)
     
     def get_active_patch_name(self) -> str:
-        return self.active_patch_name
+        return self.active_patch_name or ""
