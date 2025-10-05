@@ -23,6 +23,7 @@ class LCD():
         scan_result = i2c.scan()
         while not scan_result:
             print("Cannot Locate I2C Device")
+            return
             time.sleep_ms(10)
             scan_result = i2c.scan()
         self.LCD_I2C_ADDR = i2c.scan()[0]

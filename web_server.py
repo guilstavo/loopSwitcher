@@ -2,7 +2,9 @@ import time
 import network
 import socket
 import re
+from loop import Loop
 from file import Html, Json
+from typing import Optional
 
 class WebServer():
     
@@ -78,23 +80,19 @@ class WebServer():
         return (s)
     
     # def webpage(self):
-    def webpage(self, active_bank: str, active_patch: str):
-        html = Html("index.html").data
-        html = re.sub(r'<% bank %>', active_bank, html)
-        html = re.sub(r'<% patch %>', active_patch, html)
-        #         """
-        # return the webpage as a string so we can serve it in our main section
-        return str(html)
+    def webpage(self, active_bank: str, active_patch: str, loops: list[Loop]):
+        page = WebPage(active_bank, active_patch, loops)
+        return page.render()
 
         
-    def serve(self, active_bank: str, active_patch: str):
+    def serve(self, active_bank: str, active_patch: str, loops: list[Loop] = []) -> Optional[str]:
         print('Start web server')
         # Start web server
         try:
             client = self.connection.accept()[0]
             request = client.recv(1024)
             request = str(request)
-            print("Request:", request)
+            # print("Request:", request)
             
             try:
                 method = request.split()[0]
@@ -116,7 +114,7 @@ class WebServer():
                 except IndexError:
                     pass
             
-            html = self.webpage(active_bank, active_patch)
+            html = self.webpage(active_bank, active_patch, loops)
             client.send("HTTP/1.1 200 OK\r\nContent-type: text/html\r\n\r\n")
             client.send(html)
             client.close()
@@ -127,3 +125,53 @@ class WebServer():
             print(f"Error: {e}")
 
    
+class WebPage:
+
+    active_bank: str = ""
+    active_patch: str = ""
+    loop1: str = "disabled"
+    loop2: str = "disabled"
+    loop3: str = "disabled"
+    loop4: str = "disabled"
+    loop5: str = "disabled"
+    loop6: str = "disabled"
+    loop7: str = "disabled"
+    loop8: str = "disabled"
+
+
+    def __init__(self, active_bank: str, active_patch: str, loops: list[Loop] = []):
+        self.active_bank = active_bank
+        self.active_patch = active_patch
+        
+        if len(loops) > 0:
+            self.loop1 = "enabled" if loops[0].active else "disabled"
+        if len(loops) > 1:
+            self.loop2 = "enabled" if loops[1].active else "disabled"
+        if len(loops) > 2:
+            self.loop3 = "enabled" if loops[2].active else "disabled"
+        if len(loops) > 3:
+            self.loop4 = "enabled" if loops[3].active else "disabled"
+        if len(loops) > 4:
+            self.loop5 = "enabled" if loops[4].active else "disabled"
+        if len(loops) > 5:
+            self.loop6 = "enabled" if loops[5].active else "disabled"
+        if len(loops) > 6:
+            self.loop7 = "enabled" if loops[6].active else "disabled"
+        if len(loops) > 7:
+            self.loop8 = "enabled" if loops[7].active else "disabled"
+
+    def render(self) -> str:
+        html = Html("index.html").data
+        html = re.sub(r'<% bank %>', self.active_bank, html)
+        html = re.sub(r'<% patch %>', self.active_patch, html)
+        html = re.sub(r'<% loop1 %>', self.loop1, html)
+        html = re.sub(r'<% loop2 %>', self.loop2, html)
+        html = re.sub(r'<% loop3 %>', self.loop3, html)
+        html = re.sub(r'<% loop4 %>', self.loop4, html)
+        html = re.sub(r'<% loop5 %>', self.loop5, html)
+        html = re.sub(r'<% loop6 %>', self.loop6, html)
+        html = re.sub(r'<% loop7 %>', self.loop7, html)
+        html = re.sub(r'<% loop8 %>', self.loop8, html)
+        #         """
+        # return the webpage as a string so we can serve it in our main section
+        return str(html)
