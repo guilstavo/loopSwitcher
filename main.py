@@ -7,7 +7,6 @@ bankManager = BankManager()
 currentPatch: Optional[Patch] = bankManager.get_active_patch()
 
 def switch(request: Optional[str], currentPatch: Optional[Patch]) -> Optional[Patch]:
-    
     if request is None:
         return currentPatch
     
@@ -34,7 +33,6 @@ while True:
     if currentPatch is None:
         requestValue = webServer.serve(active_bank=bankManager.get_active_bank_name(), active_patch=bankManager.get_active_patch_name())
     else:
-        requestValue = webServer.serve(active_bank=bankManager.get_active_bank_name(), active_patch=bankManager.get_active_patch_name(), loops=currentPatch.looper.get_loops(), footswitch=currentPatch.looper.get_footswitch())
+        requestValue = webServer.serve(active_bank=bankManager.get_active_bank_name(), active_patch=bankManager.get_active_patch_name(), loops=currentPatch.looper.get_loops(), footswitch=currentPatch.looper.get_footswitch(), midi_program=currentPatch.midiPresets[0].program)
     
-    print('requestValue main.py', requestValue)
     currentPatch = switch(requestValue, currentPatch)

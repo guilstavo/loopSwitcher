@@ -2,19 +2,24 @@ from typing import List, Optional
 from file import Json
 from loop import Looper, Loop
 from display import Display
+from midi import Midi, Midi_preset
 
 
 class Patch:
     name: str
     looper: Looper
+    midiPresets: List[Midi_preset] = []
+    midi: Midi
     active: bool = False
 
-    def __init__(self, name: str, looper:Looper, loopStatusList: List[int], switchStatusList: List[int], active: bool = False):
+    def __init__(self, name: str, looper:Looper, loopStatusList: List[int], switchStatusList: List[int], midiPresetsConfigList: List, midiPin: int, active: bool = False):
         self.name = name
         self.active = active
         self.looper = looper
+        self.midi = Midi(midiPin)
+        self.midiPresets = []
 
-        print(f'Init Patch {self.name} with loops: ')
+        print(f'Init Patch {self.name}: ')
 
         i = 0
         for loop in self.looper.get_loops():
@@ -27,6 +32,11 @@ class Patch:
             switch.active = switchStatusList[i] == 1
             i += 1
             print(f'  Switch {switch.name} active: {switch.active}')
+
+        for midiPresetConfig in midiPresetsConfigList:
+            midiPreset = Midi_preset(channel=midiPresetConfig.get("channel", 0), program=midiPresetConfig.get("program", 0))
+            self.midiPresets.append(midiPreset)
+            print(f'  Midi Preset channel {midiPreset.channel} program: {midiPreset.program}')
 
 
     def select(self):
@@ -41,7 +51,8 @@ class Patch:
                 switch.activate()
             else:
                 switch.deactivate
-        
+        for midiPreset in self.midiPresets:
+            self.midi.send_pc(midiPreset.channel, midiPreset.program)
 
     def activate(self, file: Json, index: int):
         self.active = True
@@ -101,6 +112,8 @@ class BankManager:
                     looper = Looper(), 
                     loopStatusList = patch_data.get("loops", []),
                     switchStatusList= patch_data.get("footswitch", []),
+                    midiPresetsConfigList= patch_data.get("midi", []),
+                    midiPin=self.statusFile.data.get("midiPin", 4),
                     active = (bank_index == active_bank_index and patch_index == active_patch_index)
                 )
                 if patch.active:
@@ -184,7 +197,7 @@ class BankManager:
     
     def set_active_patch_name(self, active_patch: Patch):
         self.active_patch_name = active_patch.name
-        self.display.print(self.get_active_bank_name(), active_patch.name, self.display_loops(active_patch.looper.get_loops()), self.display_loops(active_patch.looper.get_footswitch(), True))
+        self.display.print(self.get_active_bank_name(), active_patch.name, self.display_loops(active_patch.looper.get_loops()), self.display_switches(active_patch.looper.get_footswitch()), active_patch.midiPresets[0].program, switch_letters=self.display_switch_letters(active_patch.looper.get_footswitch()))
     
     def get_active_patch_name(self) -> str:
         return self.active_patch_name or ""
@@ -195,12 +208,24 @@ class BankManager:
             return current_bank.get_active_patch()
         return None
     
-    def display_loops(self, loops: List[Loop], display_letter: Optional[bool]=None) -> str:
+    def display_loops(self, loops: List[Loop]) -> str:
         line = ""
         for loop in loops:
-            if display_letter is not None and display_letter:
-                line += loop.name[0].upper()
             line += self.display.on_loop if loop.active else self.display.off_loop
+
+        return line
+    
+    def display_switch_letters(self, loops: List[Loop]):
+        line = ""
+        for loop in loops:
+            line += loop.name[0].upper()
+
+        return line
+    
+    def display_switches(self, loops: List[Loop]) -> str:
+        line = ""
+        for loop in loops:
+            line += self.display.on_switch if loop.active else self.display.off_switch
 
         return line
     

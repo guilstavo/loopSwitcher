@@ -1,7 +1,6 @@
 import time
 import network
 import socket
-import re
 from loop import Loop
 from file import Html, Json
 from typing import Optional
@@ -80,36 +79,28 @@ class WebServer():
         return (s)
 
         
-    def serve(self, active_bank: str, active_patch: str, loops: list[Loop] = [], footswitch: list[Loop] = []) -> Optional[str]:
+    def serve(self, active_bank: str, active_patch: str, loops: list[Loop] = [], footswitch: list[Loop] = [], midi_program: int=0) -> Optional[str]:
         print('Start web server')
         # Start web server
         try:
+            requestValue = None
             client = self.connection.accept()[0]
-            request = client.recv(1024)
-            request = str(request)
-            # print("Request:", request)
+            request = str(client.recv(1024))
             
             try:
-                method = request.split()[0]
-                print('method', method)
-                path = request.split()[1]
+                requestParts = request.split()
+                method = requestParts[0] if requestParts else None
             except IndexError:
                 pass
             
             if method == "b'POST":
                 mybytes = client.recv(1024)
                 request = mybytes.decode('UTF-8')
-                requestValue = request.split()[0]
+                requestParts = request.split()
+                requestValue = requestParts[0] if requestParts else None
                 print('requestValue POST', requestValue)
-                
-            elif method == 'GET':
-                try:
-                    path = path.split('?')[0]
-                    print(path)
-                except IndexError:
-                    pass
             
-            html = self.webPage.render(active_bank, active_patch, loops, footswitch)
+            html = self.webPage.render(active_bank, active_patch, loops, footswitch, midi_program)
 
             response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n" + html
             encoded = response.encode("utf-8")
@@ -136,26 +127,28 @@ class WebPage:
     def __init__(self):
         self.html = Html("index.html").data
 
-    def render(self, active_bank: str, active_patch: str, loops: list[Loop] = [], footswitch: list[Loop] = []) -> str:
-        html = self.html
-        html = re.sub(r'{{ bank }}', active_bank, html)
-        html = re.sub(r'{{ patch }}', active_patch, html)
+    def render(self, active_bank: str, active_patch: str, loops: list[Loop] = [], footswitch: list[Loop] = [], midi_program: int=0) -> str:
+        context = {
+            "bank": active_bank,
+            "patch": active_patch,
+            "midi_program": midi_program,
+        }
 
-        i = 1
-        for loop in loops:
-            status_str = f'{{{{ loop{i}_status }}}}'
-            name_str = f'{{{{ loop{i}_name }}}}'
-            html = re.sub(status_str, loop.get_css_class(), html)
-            html = re.sub(name_str, loop.name, html)
-            i = i+1
+        # add loops dynamically
+        for i, loop in enumerate(loops, start=1):
+            context[f"loop{i}_status"] = loop.get_css_class()
+            context[f"loop{i}_name"] = loop.name
 
-        i = 1
-        for switch in footswitch:
-            status_str = f'{{{{ switch{i}_status }}}}'
-            name_str = f'{{{{ switch{i}_name }}}}'
-            html = re.sub(status_str, switch.get_css_class(), html)
-            html = re.sub(name_str, switch.name, html)
-            i = i+1
+        for i, switch in enumerate(footswitch, start=1):
+            context[f"switch{i}_status"] = switch.get_css_class()
+            context[f"switch{i}_name"] = switch.name
+
+        html = self.render_template(self.html, context)
 
         # return the webpage as a string so we can serve it in our main section
         return html
+    
+    def render_template(self, template: str, context: dict) -> str:
+        for key, val in context.items():
+            template = template.replace(f"{{{{ {key} }}}}", str(val))
+        return template

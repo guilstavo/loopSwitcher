@@ -11,9 +11,6 @@ class Json:
             self.data = json.load(file)
 
 
-    # def save_to_file(self, value):
-    #     json.dump(value, self.file)
-
     def save_to_file(self, key: str, value):
         # Update the in-memory data
         self.data[key] = value
