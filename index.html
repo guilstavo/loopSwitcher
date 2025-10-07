@@ -13,7 +13,7 @@
                 background-color: #1f1f1f;
             }
             .page-container {
-                width: 60vw;
+                width: 80vw;
                 margin: auto;
             }
             h1 {
@@ -48,6 +48,9 @@
             .down {
                 background-color: #4286f4;
             }
+            .loop-container {
+                margin-top: 1rem;
+            }
             .effect-loop {
                 background-color: #3c4043;
                 border: 1px solid #fff;
@@ -56,12 +59,36 @@
                 cursor: pointer;
                 width: 50px;
                 height: 100px;
+                margin: 0 auto;
+            }
+            .loop-name {
+                font-size: 1rem;
             }
             .enabled {
                 background-color: #34a853;
             }
             .disabled {
                 background-color: #ea4335;
+            }
+            .footswitch {
+                background-color: #3c4043;
+                border: 1px solid #fff;
+                border-radius: 10px;
+                margin: 10px;
+                /* width: 600px; */
+                /* height: 100px; */
+                padding: 1rem;
+            }
+            .switch-light {
+                border: 1px solid #fff;
+                border-radius: 100%;
+                margin: 0 auto;
+                width: 20px;
+                height: 20px;
+            }
+            .switch-name {
+                text-transform: capitalize;
+                font-size: 1.5rem;
             }
         </style>
         <script>
@@ -92,8 +119,8 @@
     <body>
         <div class="page-container">
             <h1>Loop Switcher</h1>
-            <p>Bank: <% bank %></p>
-            <p>Patch: <% patch %></p>
+            <p>Bank: {{ bank }}</p>
+            <p>Patch: {{ patch }}</p>
             <div class="container">
                 <div>
                     <form action="/" method="post" class="btn">
@@ -124,15 +151,57 @@
                     </form>
                 </div>
             </div>
-            <div class="container">
-                <div class="effect-loop  <% loop1 %>"></div>
-                <div class="effect-loop <% loop2 %>"></div>
-                <div class="effect-loop <% loop3 %>"></div>
-                <div class="effect-loop <% loop4 %>"></div>
-                <div class="effect-loop <% loop5 %>"></div>
-                <div class="effect-loop <% loop6 %>"></div>
-                <div class="effect-loop <% loop7 %>"></div>
-                <div class="effect-loop <% loop8 %>"></div>
+            <div class="container loop-container">
+                <div>
+                    <div class="effect-loop  {{ loop1_status }}"></div> 
+                    <p class="loop-name">{{ loop1_name }}</p>
+                </div>
+                <div>
+                    <div class="effect-loop  {{ loop2_status }}"></div> 
+                    <p class="loop-name">{{ loop2_name }}</p>
+                </div>
+                <div>
+                    <div class="effect-loop  {{ loop3_status }}"></div> 
+                    <p class="loop-name">{{ loop3_name }}</p>
+                </div>
+                <div>
+                    <div class="effect-loop  {{ loop4_status }}"></div> 
+                    <p class="loop-name">{{ loop4_name }}</p>
+                </div>
+                <div>
+                    <div class="effect-loop  {{ loop5_status }}"></div> 
+                    <p class="loop-name">{{ loop5_name }}</p>
+                </div>
+                <div>
+                    <div class="effect-loop  {{ loop6_status }}"></div> 
+                    <p class="loop-name">{{ loop6_name }}</p>
+                </div>
+                <div>
+                    <div class="effect-loop  {{ loop7_status }}"></div> 
+                    <p class="loop-name">{{ loop7_name }}</p>
+                </div>
+                <div>
+                    <div class="effect-loop  {{ loop8_status }}"></div> 
+                    <p class="loop-name">{{ loop8_name }}</p>
+                </div>
+            </div>
+            <div class="container footswitch">
+                <div class="switch">
+                    <div class="switch-light  {{ switch1_status }}"></div>
+                    <p class="switch-name">{{ switch1_name }}</p>
+                </div>
+                <div class="switch">
+                    <div class="switch-light  {{ switch2_status }}"></div>
+                    <p class="switch-name">{{ switch2_name }}</p>
+                </div>
+                <div class="switch">
+                    <div class="switch-light  {{ switch3_status }}"></div>
+                    <p class="switch-name">{{ switch3_name }}</p>
+                </div>
+                <div class="switch">
+                    <div class="switch-light  {{ switch4_status }}"></div>
+                    <p class="switch-name">{{ switch4_name }}</p>
+                </div>
             </div>
         </div>
     </body>

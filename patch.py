@@ -9,7 +9,7 @@ class Patch:
     looper: Looper
     active: bool = False
 
-    def __init__(self, name: str, looper:Looper, loopStatusList: List[int], active: bool = False):
+    def __init__(self, name: str, looper:Looper, loopStatusList: List[int], switchStatusList: List[int], active: bool = False):
         self.name = name
         self.active = active
         self.looper = looper
@@ -22,6 +22,12 @@ class Patch:
             i += 1
             print(f'  Loop {loop.name} active: {loop.active}')
 
+        i = 0
+        for switch in self.looper.get_footswitch():
+            switch.active = switchStatusList[i] == 1
+            i += 1
+            print(f'  Switch {switch.name} active: {switch.active}')
+
 
     def select(self):
         for loop in self.looper.get_loops():
@@ -30,10 +36,16 @@ class Patch:
             else:
                 loop.deactivate()
         
+        for switch in self.looper.get_footswitch():
+            if switch.active:
+                switch.activate()
+            else:
+                switch.deactivate
+        
 
     def activate(self, file: Json, index: int):
         self.active = True
-        # file.save_to_file("active_patch_index", index)
+        file.save_to_file("active_patch_index", index)
 
     def deactivate(self):
         self.active = False
@@ -51,7 +63,7 @@ class Bank:
 
     def activate(self, file: Json, index: int):
         self.active = True
-        # file.save_to_file("active_bank_index", index)
+        file.save_to_file("active_bank_index", index)
 
     def deactivate(self):
         self.active = False
@@ -88,6 +100,7 @@ class BankManager:
                     name = patch_data.get("name", ""),
                     looper = Looper(), 
                     loopStatusList = patch_data.get("loops", []),
+                    switchStatusList= patch_data.get("footswitch", []),
                     active = (bank_index == active_bank_index and patch_index == active_patch_index)
                 )
                 if patch.active:
@@ -124,8 +137,6 @@ class BankManager:
         new_bank_index = current_index + 1
         if new_bank_index >= len(self.banks):
             new_bank_index = 0
-        # self.banks[new_bank_index].activate(self.statusFile, new_bank_index)
-        # self.set_active_bank_name(self.banks[new_bank_index].name)
         self.set_active_bank(self.banks[new_bank_index], new_bank_index)
         return self.banks[new_bank_index]
 
@@ -138,8 +149,6 @@ class BankManager:
         new_bank_index = current_index - 1
         if new_bank_index < 0:
             new_bank_index = len(self.banks) - 1
-        # self.banks[new_bank_index].activate(self.statusFile, new_bank_index)
-        # self.set_active_bank_name(self.banks[new_bank_index].name)
         self.set_active_bank(self.banks[new_bank_index], new_bank_index)
         return self.banks[new_bank_index]
 
@@ -151,12 +160,10 @@ class BankManager:
     
             if new_patch:
                 new_patch.select()
-                # new_patch.activate(self.statusFile, patch_index)
                 if current_patch:
                     current_patch.deactivate()
             
-                self.set_active_patch_name(new_patch)
-                # self.display.print(current_bank.name, current_bank.patches[patch_index].name)
+                self.set_active_patch(new_patch, patch_index)
                 return new_patch
 
 
@@ -177,7 +184,7 @@ class BankManager:
     
     def set_active_patch_name(self, active_patch: Patch):
         self.active_patch_name = active_patch.name
-        self.display.print(self.get_active_bank_name(), active_patch.name, self.display_loops(active_patch.looper.get_loops()))
+        self.display.print(self.get_active_bank_name(), active_patch.name, self.display_loops(active_patch.looper.get_loops()), self.display_loops(active_patch.looper.get_footswitch(), True))
     
     def get_active_patch_name(self) -> str:
         return self.active_patch_name or ""
@@ -188,10 +195,12 @@ class BankManager:
             return current_bank.get_active_patch()
         return None
     
-
-    def display_loops(self, loops: List[Loop]) -> str:
+    def display_loops(self, loops: List[Loop], display_letter: Optional[bool]=None) -> str:
         line = ""
         for loop in loops:
+            if display_letter is not None and display_letter:
+                line += loop.name[0].upper()
             line += self.display.on_loop if loop.active else self.display.off_loop
 
         return line
+    

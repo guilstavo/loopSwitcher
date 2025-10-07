@@ -27,9 +27,16 @@ class Json:
 
 class Html:
 
+    fileName: str
+
     def __init__(self, fileName: str = "index.html"):
         self.fileName = fileName
 
-        with open(self.fileName, 'r') as file:
-            self.file = file
-            self.data = file.read()
+        data = ""
+        with open(self.fileName, "r") as f:
+            while True:
+                chunk = f.read(512)  # read 512 bytes at a time
+                if not chunk:
+                    break
+                data += chunk
+            self.data = data

@@ -34,7 +34,7 @@ while True:
     if currentPatch is None:
         requestValue = webServer.serve(active_bank=bankManager.get_active_bank_name(), active_patch=bankManager.get_active_patch_name())
     else:
-        requestValue = webServer.serve(active_bank=bankManager.get_active_bank_name(), active_patch=bankManager.get_active_patch_name(), loops=currentPatch.looper.get_loops())
+        requestValue = webServer.serve(active_bank=bankManager.get_active_bank_name(), active_patch=bankManager.get_active_patch_name(), loops=currentPatch.looper.get_loops(), footswitch=currentPatch.looper.get_footswitch())
     
     print('requestValue main.py', requestValue)
     currentPatch = switch(requestValue, currentPatch)

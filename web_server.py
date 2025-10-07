@@ -11,7 +11,7 @@ class WebServer():
     def __init__(self, config_file_name: str = "network_config.json"):
         config_data = Json(config_file_name).data 
         self.access_point = config_data.get("access_point", False)
-        self.html = Html("index.html").data
+        self.webPage = WebPage()
 
         if (self.access_point):
             self.access_point_setup(config_data)
@@ -78,14 +78,9 @@ class WebServer():
         print("listening on", address)
         # then we will return this socket so we can use it in our main section
         return (s)
-    
-    # def webpage(self):
-    def webpage(self, active_bank: str, active_patch: str, loops: list[Loop]):
-        page = WebPage(active_bank, active_patch, loops)
-        return page.render()
 
         
-    def serve(self, active_bank: str, active_patch: str, loops: list[Loop] = []) -> Optional[str]:
+    def serve(self, active_bank: str, active_patch: str, loops: list[Loop] = [], footswitch: list[Loop] = []) -> Optional[str]:
         print('Start web server')
         # Start web server
         try:
@@ -114,9 +109,18 @@ class WebServer():
                 except IndexError:
                     pass
             
-            html = self.webpage(active_bank, active_patch, loops)
-            client.send("HTTP/1.1 200 OK\r\nContent-type: text/html\r\n\r\n")
-            client.send(html)
+            html = self.webPage.render(active_bank, active_patch, loops, footswitch)
+
+            response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n" + html
+            encoded = response.encode("utf-8")
+
+            total_sent = 0
+            while total_sent < len(encoded):
+                sent = client.send(encoded[total_sent:])
+                if sent == 0:
+                    break  # connection closed
+                total_sent += sent
+
             client.close()
             return requestValue
         
@@ -127,51 +131,31 @@ class WebServer():
    
 class WebPage:
 
-    active_bank: str = ""
-    active_patch: str = ""
-    loop1: str = "disabled"
-    loop2: str = "disabled"
-    loop3: str = "disabled"
-    loop4: str = "disabled"
-    loop5: str = "disabled"
-    loop6: str = "disabled"
-    loop7: str = "disabled"
-    loop8: str = "disabled"
+    html: str
 
+    def __init__(self):
+        self.html = Html("index.html").data
 
-    def __init__(self, active_bank: str, active_patch: str, loops: list[Loop] = []):
-        self.active_bank = active_bank
-        self.active_patch = active_patch
-        
-        if len(loops) > 0:
-            self.loop1 = "enabled" if loops[0].active else "disabled"
-        if len(loops) > 1:
-            self.loop2 = "enabled" if loops[1].active else "disabled"
-        if len(loops) > 2:
-            self.loop3 = "enabled" if loops[2].active else "disabled"
-        if len(loops) > 3:
-            self.loop4 = "enabled" if loops[3].active else "disabled"
-        if len(loops) > 4:
-            self.loop5 = "enabled" if loops[4].active else "disabled"
-        if len(loops) > 5:
-            self.loop6 = "enabled" if loops[5].active else "disabled"
-        if len(loops) > 6:
-            self.loop7 = "enabled" if loops[6].active else "disabled"
-        if len(loops) > 7:
-            self.loop8 = "enabled" if loops[7].active else "disabled"
+    def render(self, active_bank: str, active_patch: str, loops: list[Loop] = [], footswitch: list[Loop] = []) -> str:
+        html = self.html
+        html = re.sub(r'{{ bank }}', active_bank, html)
+        html = re.sub(r'{{ patch }}', active_patch, html)
 
-    def render(self) -> str:
-        html = Html("index.html").data
-        html = re.sub(r'<% bank %>', self.active_bank, html)
-        html = re.sub(r'<% patch %>', self.active_patch, html)
-        html = re.sub(r'<% loop1 %>', self.loop1, html)
-        html = re.sub(r'<% loop2 %>', self.loop2, html)
-        html = re.sub(r'<% loop3 %>', self.loop3, html)
-        html = re.sub(r'<% loop4 %>', self.loop4, html)
-        html = re.sub(r'<% loop5 %>', self.loop5, html)
-        html = re.sub(r'<% loop6 %>', self.loop6, html)
-        html = re.sub(r'<% loop7 %>', self.loop7, html)
-        html = re.sub(r'<% loop8 %>', self.loop8, html)
-        #         """
+        i = 1
+        for loop in loops:
+            status_str = f'{{{{ loop{i}_status }}}}'
+            name_str = f'{{{{ loop{i}_name }}}}'
+            html = re.sub(status_str, loop.get_css_class(), html)
+            html = re.sub(name_str, loop.name, html)
+            i = i+1
+
+        i = 1
+        for switch in footswitch:
+            status_str = f'{{{{ switch{i}_status }}}}'
+            name_str = f'{{{{ switch{i}_name }}}}'
+            html = re.sub(status_str, switch.get_css_class(), html)
+            html = re.sub(name_str, switch.name, html)
+            i = i+1
+
         # return the webpage as a string so we can serve it in our main section
-        return str(html)
+        return html
