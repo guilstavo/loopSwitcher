@@ -4,6 +4,7 @@ import socket
 from loop import Loop
 from file import Html, Json
 from typing import Optional
+import json
 
 class WebServer():
     
@@ -72,52 +73,112 @@ class WebServer():
         # gets adress information for the socket, create a socket, bind it, then start listening for any clients trying to connect
         address = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
         s = socket.socket()
-        s.bind(address)
-        s.listen(1)
-        print("listening on", address)
+        try:
+            s.bind(address)
+            s.listen(1)
+            print("listening on", address)
+        except Exception as e:
+            print("Socket error:", e)
         # then we will return this socket so we can use it in our main section
         return (s)
 
-        
-    def serve(self, active_bank: str, active_patch: str, loops: list[Loop] = [], footswitch: list[Loop] = [], midi_program: int=0) -> Optional[str]:
+    def serve(self, active_bank: str, active_patch: str, loops: list[Loop] = [], footswitch: list[Loop] = [], midi_program: int = 0) -> Optional[str]:
         print('Start web server')
-        # Start web server
         try:
             requestValue = None
             client = self.connection.accept()[0]
             request = str(client.recv(1024))
-            
-            try:
-                requestParts = request.split()
-                method = requestParts[0] if requestParts else None
-            except IndexError:
-                pass
-            
-            if method == "b'POST":
+
+            # Determine request path
+            request_line = request.split('\r\n')[0]
+            parts = request_line.split()
+            path = parts[1] if len(parts) > 1 else "/"
+
+            if "POST" in request:
+                print('POST request')
                 mybytes = client.recv(1024)
                 request = mybytes.decode('UTF-8')
                 requestParts = request.split()
                 requestValue = requestParts[0] if requestParts else None
                 print('requestValue POST', requestValue)
-            
+
+            # --- 🟢 1. If client requests /events → send SSE stream ---
+            if path == "/events":
+                print("SSE client connected")
+                client.send(
+                    'HTTP/1.1 200 OK\r\n'
+                    'Content-Type: text/event-stream\r\n'
+                    'Cache-Control: no-cache\r\n'
+                    'Connection: keep-alive\r\n\r\n'
+                )
+
+                # Stream updates periodically
+                for _ in range(120):  # 60 updates (~1 per sec)
+    
+                    context = {
+                        "bank": active_bank,
+                        "patch": active_patch,
+                        "midi_program": midi_program,
+                        "classes":{}
+                    }
+
+                    # add loops dynamically
+                    for i, loop in enumerate(loops, start=1):
+                        context["classes"][f"loop{i}_status"] = loop.get_css_class()
+                        # context[f"loop{i}_name"] = loop.name
+
+                    for i, switch in enumerate(footswitch, start=1):
+                        context["classes"][f"switch{i}_status"] = switch.get_css_class()
+                        # context[f"switch{i}_name"] = switch.name
+
+                    msg = f"data: {json.dumps(context)}\n\n"
+                    client.send(msg)
+                    time.sleep(1)
+
+                client.close()
+                return None
+
+
+            # client.close()
             html = self.webPage.render(active_bank, active_patch, loops, footswitch, midi_program)
+            encoded = html.encode("utf-8")
 
-            response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n" + html
-            encoded = response.encode("utf-8")
+            # Build proper HTTP response
+            response_headers = (
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Type: text/html\r\n"
+                f"Content-Length: {len(encoded)}\r\n"
+                "Connection: close\r\n"
+                "\r\n"
+            )
 
+            # Encode headers
+            header_bytes = response_headers.encode("utf-8")
+
+            # Send headers first
+            total_sent = 0
+            while total_sent < len(header_bytes):
+                sent = client.send(header_bytes[total_sent:])
+                if sent == 0:
+                    break
+                total_sent += sent
+
+            # Send body
             total_sent = 0
             while total_sent < len(encoded):
                 sent = client.send(encoded[total_sent:])
                 if sent == 0:
-                    break  # connection closed
+                    break
                 total_sent += sent
 
+            # Close client connection
             client.close()
+
             return requestValue
-        
+
         except Exception as e:
-            # Log the error and continue
             print(f"Error: {e}")
+    
 
    
 class WebPage:
@@ -136,11 +197,11 @@ class WebPage:
 
         # add loops dynamically
         for i, loop in enumerate(loops, start=1):
-            context[f"loop{i}_status"] = loop.get_css_class()
+            # context[f"loop{i}_status"] = loop.get_css_class()
             context[f"loop{i}_name"] = loop.name
 
         for i, switch in enumerate(footswitch, start=1):
-            context[f"switch{i}_status"] = switch.get_css_class()
+            # context[f"switch{i}_status"] = switch.get_css_class()
             context[f"switch{i}_name"] = switch.name
 
         html = self.render_template(self.html, context)

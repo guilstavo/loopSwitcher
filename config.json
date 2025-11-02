@@ -1,14 +1,14 @@
 {
     "version": "1.0",
     "loops": [
-        {"name": "Loop 1", "pinSend": 16, "pinReturn": 17},
-        {"name": "Loop 2", "pinSend": 18, "pinReturn": 19},
-        {"name": "Loop 3", "pinSend": 20, "pinReturn": 21},
-        {"name": "Loop 4", "pinSend": 22, "pinReturn": 26},
-        {"name": "Loop 5", "pinSend": 8, "pinReturn": 9},
-        {"name": "Loop 6", "pinSend": 10, "pinReturn": 11},
-        {"name": "Loop 7", "pinSend": 12, "pinReturn": 13},
-        {"name": "Loop 8", "pinSend": 14, "pinReturn": 25}
+        {"name": "Loop 1", "pinSend": 16, "pinReturn": 8},
+        {"name": "Loop 2", "pinSend": 17, "pinReturn": 9},
+        {"name": "Loop 3", "pinSend": 18, "pinReturn": 10},
+        {"name": "Loop 4", "pinSend": 19, "pinReturn": 11},
+        {"name": "Loop 5", "pinSend": 20, "pinReturn": 12},
+        {"name": "Loop 6", "pinSend": 21, "pinReturn": 13},
+        {"name": "Loop 7", "pinSend": 22, "pinReturn": 14},
+        {"name": "Loop 8", "pinSend": 26, "pinReturn": 15}
     ],
     "footswitch": {
         "lead": 2,
