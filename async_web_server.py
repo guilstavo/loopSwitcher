@@ -2,8 +2,8 @@ import uasyncio as asyncio
 import network
 import json
 from typing import Optional
-from patch import BankManager, Patch
-from loop import Loop
+from patch import Patch
+from bank_manager import BankManager
 from file import Html, Json
 
 class AsyncWebServer:
@@ -130,10 +130,6 @@ class AsyncWebServer:
 
                 # Update patch
                 self.current_patch = self.switch(request_value, self.current_patch)
-                if self.current_patch:
-                    self.loops = self.current_patch.looper.get_loops()
-                    self.footswitch = self.current_patch.looper.get_footswitch()
-                    self.midi_program = self.current_patch.midiPresets[0].program
 
                 # Send simple 200 OK to avoid ECONNRESET
                 resp = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 2\r\nConnection: close\r\n\r\nOK"
@@ -142,13 +138,7 @@ class AsyncWebServer:
                 return
 
             # --- Serve HTML ---
-            html = self.webPage.render(
-                self.bankManager.get_active_bank_name(), 
-                self.bankManager.get_active_patch_name(),
-                self.loops, 
-                self.footswitch, 
-                self.midi_program
-            )
+            html = self.webPage.render(self.bankManager.get_html_context(self.current_patch))
 
             resp = (
                 "HTTP/1.1 200 OK\r\n"
@@ -190,28 +180,13 @@ class AsyncWebServer:
         while True:
             await asyncio.sleep(3600)
 
-
-
 # ---------- Web page rendering ----------
 class WebPage:
     def __init__(self):
         self.html = Html("index.html").data
 
-    def render(self, active_bank, active_patch, loops=[], footswitch=[], midi_program=0):
-        context = {
-            "bank": active_bank,
-            "patch": active_patch,
-            "midi_program": midi_program
-        }
-        for i, loop in enumerate(loops, start=1):
-            context[f"loop{i}_name"] = loop.name
-            context[f"loop{i}_status"] = loop.get_css_class()
-        for i, sw in enumerate(footswitch, start=1):
-            context[f"switch{i}_name"] = sw.name
-            context[f"switch{i}_status"] = sw.get_css_class()
-        return self.render_template(self.html, context)
-
-    def render_template(self, template, context):
+    def render(self, context):
+        template = self.html
         for k, v in context.items():
             template = template.replace(f"{{{{ {k} }}}}", str(v))
         return template

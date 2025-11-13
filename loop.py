@@ -2,7 +2,6 @@ from machine import Pin
 from typing import List, Optional
 from file import Json
 
-
 # One Loop is each individual Send/Return input
 class Loop:
     ACTIVE_PIN_VALUE: int = 1
@@ -23,16 +22,18 @@ class Loop:
         if pinOut is not None:
             self.pinReturn = Pin(pinOut, Pin.OUT)
         
-        self.deactivate()
+        # self.deactivate()
         print('Init Loop', name)
 
     def activate(self):
+        self.active = True
         self.pinSend.value(self.ACTIVE_PIN_VALUE) 
         if self.pinReturn is not None:
             self.pinReturn.value(self.ACTIVE_PIN_VALUE)
         print(f'Loop {self.name} activated')
 
     def deactivate(self):
+        self.active = False
         self.pinSend.value(self.INACTIVE_PIN_VALUE) 
         if self.pinReturn is not None:
             self.pinReturn.value(self.INACTIVE_PIN_VALUE)
