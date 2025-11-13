@@ -1,20 +1,20 @@
 {
     "version": "1.0",
     "loops": [
-        {"name": "Loop 1", "pinSend": 16, "pinReturn": 8},
-        {"name": "Loop 2", "pinSend": 17, "pinReturn": 9},
-        {"name": "Loop 3", "pinSend": 18, "pinReturn": 10},
-        {"name": "Loop 4", "pinSend": 19, "pinReturn": 11},
-        {"name": "Loop 5", "pinSend": 20, "pinReturn": 12},
-        {"name": "Loop 6", "pinSend": 21, "pinReturn": 13},
-        {"name": "Loop 7", "pinSend": 22, "pinReturn": 14},
-        {"name": "Loop 8", "pinSend": 26, "pinReturn": 15}
+        {"name": "Loop 1", "pinSend": 26, "pinReturn": 8},
+        {"name": "Loop 2", "pinSend": 22, "pinReturn": 9},
+        {"name": "Loop 3", "pinSend": 21, "pinReturn": 10},
+        {"name": "Loop 4", "pinSend": 20, "pinReturn": 11},
+        {"name": "Loop 5", "pinSend": 19, "pinReturn": 12},
+        {"name": "Loop 6", "pinSend": 18, "pinReturn": 13},
+        {"name": "Loop 7", "pinSend": 17, "pinReturn": 14},
+        {"name": "Loop 8", "pinSend": 16, "pinReturn": 15}
     ],
     "footswitch": {
         "lead": 2,
         "clean": 3,
-        "reverb": 5,
-        "boost": 6
+        "reverb": 6,
+        "boost": 7
     },
     "midiPin": 4,
 	"banks": [
@@ -92,6 +92,47 @@
                 {
                     "name": "Patch 2.4",
                     "loops":[0,0,0,0,1,1,1,1],
+                    "footswitch": [0,0,0,0],
+                     "midi": [{
+                        "channel": 1,
+                        "program": 8
+                    }]
+                }
+            ]
+        },
+        {
+            "name": "Bank 3",
+            "patches": [ 
+                {
+					"name": "Patch 3.1",
+					"loops":[0,0,0,0,0,0,0,0],
+                    "footswitch": [0,0,0,0],
+                     "midi": [{
+                        "channel": 1,
+                        "program": 5
+                    }]
+				},
+                {
+					"name": "Patch 3.2",
+					"loops":[1,1,1,1,1,1,1,1],
+                    "footswitch": [1,1,1,1],
+                     "midi": [{
+                        "channel": 1,
+                        "program": 6
+                    }]
+				},
+                {
+                    "name": "Patch 3.3",
+                    "loops":[0,0,0,0,0,0,1,1],
+                    "footswitch": [0,0,0,1],
+                     "midi": [{
+                        "channel": 1,
+                        "program": 7
+                    }]
+                },
+                {
+                    "name": "Patch 3.4",
+                    "loops":[1,1,1,1,1,1,0,0],
                     "footswitch": [0,0,0,0],
                      "midi": [{
                         "channel": 1,

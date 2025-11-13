@@ -2,7 +2,11 @@ from machine import Pin
 from typing import List, Optional
 from file import Json
 
+
+# One Loop is each individual Send/Return input
 class Loop:
+    ACTIVE_PIN_VALUE: int = 1
+    INACTIVE_PIN_VALUE: int = 0
 
     name: str
     pinSend: Pin
@@ -23,20 +27,22 @@ class Loop:
         print('Init Loop', name)
 
     def activate(self):
-        self.pinSend.value(1) 
+        self.pinSend.value(self.ACTIVE_PIN_VALUE) 
         if self.pinReturn is not None:
-            self.pinReturn.value(1)
+            self.pinReturn.value(self.ACTIVE_PIN_VALUE)
         print(f'Loop {self.name} activated')
 
     def deactivate(self):
-        self.pinSend.value(0) 
+        self.pinSend.value(self.INACTIVE_PIN_VALUE) 
         if self.pinReturn is not None:
-            self.pinReturn.value(0)
+            self.pinReturn.value(self.INACTIVE_PIN_VALUE)
         print(f'Loop {self.name} deactivated')
 
     def get_css_class(self) -> str:
         return "enabled" if self.active else "disabled"
 
+# Looper is the set of Loops (8 loops in total). 
+# The Looper logic also includes the Footswitch, which is tecnically another set of loops
 class Looper:
     
     def __init__(self, fileName: str = "config.json"):
@@ -46,9 +52,9 @@ class Looper:
         file = Json(fileName)
         for loop_data in file.data.get("loops", []):
             self.add_loop(
-                name = loop_data.get("name", ""),
-                pinIn = loop_data.get("pinSend", 0),
-                pinOut = loop_data.get("pinReturn", 0)
+                name = loop_data.get("name"),
+                pinIn = loop_data.get("pinSend"),
+                pinOut = loop_data.get("pinReturn")
             )
         for switch_name, switch_pin in file.data.get("footswitch", {}).items():
             self.add_switch(
@@ -69,16 +75,6 @@ class Looper:
     
     def get_loops(self) -> List[Loop]:
         return self.__loopers
-    
-    def loop_count(self) -> int:
-        return len(self.__loopers)
-    
-    def clone(self):
-        # Create a new Looper instance
-        new_looper = Looper()
-        # Copy attributes manually
-        new_looper.__loopers = [loop for loop in self.__loopers]
-        return new_looper
 
     def add_switch(self, name: str,  pin: int):
         switch = Loop(name=name, pinIn=pin)
@@ -86,5 +82,4 @@ class Looper:
         print(f'Added switch {name} with pin {pin}')
 
     def get_footswitch(self) -> List[Loop]:
-        # return self.__footSwitch
         return sorted(self.__footSwitch, key=lambda x: x.order)

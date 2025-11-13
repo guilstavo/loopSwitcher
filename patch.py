@@ -50,7 +50,7 @@ class Patch:
             if switch.active:
                 switch.activate()
             else:
-                switch.deactivate
+                switch.deactivate()
         for midiPreset in self.midiPresets:
             self.midi.send_pc(midiPreset.channel, midiPreset.program)
 

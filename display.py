@@ -50,15 +50,15 @@ class Display:
         0b01110,
         0b00000]
 
-        self.lcd.create_charactor(0,off_pedal_char)
-        self.lcd.create_charactor(1,on_pedal_char)
-        self.lcd.create_charactor(2,off_switch_char)
-        self.lcd.create_charactor(3,on_switch_char)
-        self.off_loop = chr(0)
-        self.on_loop = chr(1)
-        self.off_switch = chr(2)
-        self.on_switch = chr(3)
-
+        if self.lcd:
+            self.lcd.create_charactor(0,off_pedal_char)
+            self.lcd.create_charactor(1,on_pedal_char)
+            self.lcd.create_charactor(2,off_switch_char)
+            self.lcd.create_charactor(3,on_switch_char)
+            self.off_loop = chr(0)
+            self.on_loop = chr(1)
+            self.off_switch = chr(2)
+            self.on_switch = chr(3)
         print('Init Display')
 
     def print(self, line1: str = "", line2: str = "", line3: str = "", switch_values: str = "", midi_value: int = 0, switch_letters: str = ""):
