@@ -28,6 +28,7 @@ class BankManager:
             for patch_index, patch_data in enumerate(bank_data.get("patches", [])):
                 patch = Patch(
                     name = patch_data.get("name", ""),
+                    looper = self.looper, 
                     loopStatusList = patch_data.get("loops", []),
                     switchStatusList= patch_data.get("footswitch", []),
                     midiPresetsConfigList= patch_data.get("midi", []),

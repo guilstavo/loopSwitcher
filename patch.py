@@ -10,9 +10,10 @@ class Patch:
     midi: Midi
     active: bool = False
 
-    def __init__(self, name: str, loopStatusList: List[int], switchStatusList: List[int], midiPresetsConfigList: List, midiPin: int, active: bool = False):
+    def __init__(self, name: str, looper:Looper, loopStatusList: List[int], switchStatusList: List[int], midiPresetsConfigList: List, midiPin: int, active: bool = False):
         self.name = name
         self.active = active
+        self.looper = looper
         self.midi = Midi(midiPin)
         self.midiPresets = []
         self.loopStatusList = list(map(bool, loopStatusList))
