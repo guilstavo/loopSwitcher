@@ -1,7 +1,7 @@
 {
     "version": "1.0",
     "loops": [
-        {"name": "Loop 1", "pinSend": 26, "pinReturn": 8},
+         {"name": "Loop 1", "pinSend": 26, "pinReturn": 8},
         {"name": "Loop 2", "pinSend": 22, "pinReturn": 9},
         {"name": "Loop 3", "pinSend": 21, "pinReturn": 10},
         {"name": "Loop 4", "pinSend": 20, "pinReturn": 11},
@@ -22,36 +22,36 @@
 			"name": "Bank 1",
 			"patches": [ 
 				{
-					"name": "Patch 1.1",
-					"loops":[1,0,1,0,1,0,1,0],
-                    "footswitch": [1,0,1,0],
+					"name": "First Loop",
+					"loops":[0,0,0,0,0,0,0,1],
+                    "footswitch": [0,0,0,0],
                      "midi": [{
                         "channel": 1,
                         "program": 1
-                    }]
-				},
-                {
-					"name": "Patch 1.2",
-					"loops":[1,1,0,0,1,1,0,0],
-                    "footswitch": [1,1,0,0],
+                        }]
+                    },
+                    {
+                    "name": "Second Loop",
+                    "loops":[0,0,0,0,0,0,1,0],
+                    "footswitch": [0,0,0,0],
                      "midi": [{
                         "channel": 1,
                         "program": 2
-                    }]
-				},
-                {
-                    "name": "Patch 1.3",
-                    "loops":[1,1,1,0,0,0,1,1],
-                    "footswitch": [1,1,1,0],
+                        }]
+                    },
+                    {
+                    "name": "Third Loop",
+                    "loops":[0,0,0,0,0,1,0,0],
+                    "footswitch": [0,0,0,0],
                      "midi": [{
                         "channel": 1,
                         "program": 3
                     }]
                 },
                 {
-                    "name": "Patch 1.4",
-                    "loops":[1,1,1,1,0,0,0,0],
-                    "footswitch": [1,1,1,1],
+                    "name": "Fourth Loop",
+                    "loops":[0,0,0,0,1,0,0,0],
+                    "footswitch": [0,0,0,0],
                      "midi": [{
                         "channel": 1,
                         "program": 4
@@ -63,35 +63,35 @@
             "name": "Bank 2",
             "patches": [ 
                 {
-					"name": "Patch 2.1",
-					"loops":[0,1,0,1,0,1,0,1],
-                    "footswitch": [0,1,0,1],
+                    "name": "Fitfh Loop",
+                    "loops":[0,0,0,1,0,0,0,0],
+                    "footswitch": [0,0,0,0],
                      "midi": [{
                         "channel": 1,
                         "program": 5
                     }]
 				},
                 {
-					"name": "Patch 2.2",
-					"loops":[0,0,1,1,0,0,1,1],
-                    "footswitch": [0,0,1,1],
+                    "name": "Sixth Loop",
+                    "loops":[0,0,1,0,0,0,0,0],
+                    "footswitch": [0,0,0,0],
                      "midi": [{
                         "channel": 1,
                         "program": 6
                     }]
 				},
                 {
-                    "name": "Patch 2.3",
-                    "loops":[0,0,0,1,1,1,0,0],
-                    "footswitch": [0,0,0,1],
+                    "name": "Seventh Loop",
+                    "loops":[0,1,0,0,0,0,0,0],
+                    "footswitch": [0,0,0,0],
                      "midi": [{
                         "channel": 1,
                         "program": 7
                     }]
                 },
                 {
-                    "name": "Patch 2.4",
-                    "loops":[0,0,0,0,1,1,1,1],
+                    "name": "Eith Loop",
+                    "loops":[0,1,0,0,0,0,0,0],
                     "footswitch": [0,0,0,0],
                      "midi": [{
                         "channel": 1,
@@ -123,7 +123,7 @@
 				},
                 {
                     "name": "Patch 3.3",
-                    "loops":[0,0,0,0,0,0,1,1],
+                    "loops":[1,0,0,0,0,0,0,1],
                     "footswitch": [0,0,0,1],
                      "midi": [{
                         "channel": 1,
@@ -132,8 +132,90 @@
                 },
                 {
                     "name": "Patch 3.4",
-                    "loops":[1,1,1,1,1,1,0,0],
+                    "loops":[1,0,0,0,1,0,0,1],
                     "footswitch": [0,0,0,0],
+                     "midi": [{
+                        "channel": 1,
+                        "program": 8
+                    }]
+                }
+            ]
+        },
+        {
+            "name": "Bank 4",
+            "patches": [ 
+                {
+					"name": "Patch 4.1",
+					"loops":[0,1,1,1,1,1,1,1],
+                    "footswitch": [1,1,1,1],
+                     "midi": [{
+                        "channel": 1,
+                        "program": 5
+                    }]
+				},
+                {
+					"name": "Patch 4.2",
+					"loops":[0,0,1,1,1,1,1,1],
+                    "footswitch": [1,1,1,1],
+                     "midi": [{
+                        "channel": 1,
+                        "program": 6
+                    }]
+				},
+                {
+                    "name": "Patch 4.3",
+                    "loops":[0,0,0,1,1,1,1,1],
+                    "footswitch": [1,1,1,1],
+                     "midi": [{
+                        "channel": 1,
+                        "program": 7
+                    }]
+                },
+                {
+                    "name": "Patch 4.4",
+                    "loops":[0,0,0,0,1,1,1,1],
+                    "footswitch": [1,1,1,1],
+                     "midi": [{
+                        "channel": 1,
+                        "program": 8
+                    }]
+                }
+            ]
+        },
+        {
+            "name": "Bank 5",
+            "patches": [ 
+                {
+					"name": "Patch 5.1",
+					"loops":[1,1,1,0,0,0,0,1],
+                    "footswitch": [1,1,1,1],
+                     "midi": [{
+                        "channel": 1,
+                        "program": 5
+                    }]
+				},
+                {
+					"name": "Patch 5.2",
+					"loops":[1,1,1,0,0,0,0,0],
+                    "footswitch": [1,1,1,1],
+                     "midi": [{
+                        "channel": 1,
+                        "program": 6
+                    }]
+				},
+                {
+                    "name": "Patch 5.3",
+                    "loops":[1,0,1,0,0,0,0,0],
+                    "footswitch": [1,1,1,1],
+                     "midi": [{
+                        "channel": 1,
+                        "program": 7
+                    }]
+                },
+                {
+                    "name": "Patch 5.5",
+                    "loops":[0,1,1,0,0,0,0,1],
+                    "footswitch": [1,1,1,1],
                      "midi": [{
                         "channel": 1,
                         "program": 8
@@ -143,3 +225,4 @@
         }
 	]
 }
+

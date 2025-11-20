@@ -4,8 +4,8 @@ from file import Json
 
 # One Loop is each individual Send/Return input
 class Loop:
-    ACTIVE_PIN_VALUE: int = 1
-    INACTIVE_PIN_VALUE: int = 0
+    ACTIVE_PIN_VALUE: int = 0
+    INACTIVE_PIN_VALUE: int = 1
 
     name: str
     pinSend: Pin
